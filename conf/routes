@@ -1,0 +1,25 @@
+
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+
+GET         /                                         controllers.HomeController.index
+
+GET         /MRDB/genome/conditionSearchBefore        controllers.GenomeController.conditionSearchBefore
+
+
+GET         /MRDB/tools/blastBefore                   controllers.ToolsController.blastBefore
+POST        /MRDB/tools/blastRun                      controllers.ToolsController.blastRun
+GET         /MRDB/tools/blastResultBefore             controllers.ToolsController.blastResultBefore(path:String)
+POST        /MRDB/tools/blastResult                   controllers.ToolsController.blastResult(path:String)
+
+GET         /MRDB/tools/seqFetchBefore                controllers.ToolsController.seqFetchBefore
+POST        /MRDB/tools/seqRegion                     controllers.ToolsController.seqRegion
+
+GET         /MRDB/tools/enrichmentBefore              controllers.ToolsController.enrichmentBefore
+
+# Map static resources from the /public folder to the /assets URL path
+GET         /assets/*file                             controllers.Assets.versioned(path="/public", file: Asset)
+
+      
