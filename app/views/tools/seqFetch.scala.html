@@ -3,7 +3,9 @@
 
     <div class="row">
         <div class="form-group col-sm-12">
-            <h2 class="page-heading">Sequences Fetch</h2>
+            <h2 class="page-heading">Sequences Fetch
+            <a title="Get DNA sequences corresponding to set of genomic coordinates">
+                <i class="fa fa-question-circle-o" style="font-size: 25px"></i></a></h2>
         </div>
     </div>
 
@@ -26,7 +28,7 @@
             <div class="col-sm-6">
                 <textarea class="form-control" name="region" id="region" rows="5"></textarea>
                 <span class="help-block">e.g.,&nbsp;<a href="#"><em id="egChr">
-                    Chr1:1-2000 Chr2:2500-4000</em></a></span>
+                    scaffold1:1-2000 scaffold2:2500-4000</em></a></span>
             </div>
         </div>
 
@@ -105,14 +107,14 @@
                         url: "@routes.ToolsController.seqRegion()",
                         type: "post",
                         data: $("#conditionForm").serialize(),
-                        success: function (data) {
+                        success: function (res) {
                             $("#search").attr("disabled", false).html("Search").blur();
                             layer.close(index);
-                            if (data.valid == "false") {
-                                swal("Error", data.message, "error");
+                            if (res.status === 0) {
+                                swal("Error", res.message, "error");
                                 $("#result").hide()
                             } else {
-                                $("#queryText").val(data.data);
+                                $("#queryText").val(res.data);
                                 $("#result").show()
                             }
                         }

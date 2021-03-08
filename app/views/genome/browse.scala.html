@@ -1,0 +1,42 @@
+@()(implicit session: Session)
+@home.main("Browse") {
+
+    <div class="row">
+        <div class="form-group col-sm-12">
+            <h2 class="page-heading">Species Browse</h2>
+        </div>
+    </div>
+
+    <label>Select the columns to display:</label>
+    <div id="checkbox" class="checkbox">
+
+    </div>
+
+    <div id="toolbar">
+            &nbsp;Keyword：
+    </div>
+
+    <table class="display table table-bordered" id="table" data-pagination="true" data-search="true"
+    data-toolbar="#toolbar" data-page-list="[10, 25, 50, 100, all]" data-search-align="left" data-multiple-search="true"
+    >
+        <thead>
+            <tr>
+                <th data-field='geneid' data-sortable='true' id="marker">GeneID</th>
+            </tr>
+        </thead>
+
+    </table>
+
+    <script src="@routes.Assets.versioned("views/browse/browse.js")" type="text/javascript"></script>
+
+    <script>
+
+            $(function () {
+                var url = "@routes.GenomeController.getAllGenome()";
+                Browse(url)
+            })
+
+    </script>
+
+
+}

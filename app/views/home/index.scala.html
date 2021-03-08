@@ -1,5 +1,5 @@
 @()(implicit session: Session)
-@home.main("Myrica Rybra Database") {
+@home.main("Myrica rubra Database") {
 
     <style>
             .res {
@@ -34,28 +34,25 @@
             <div class="index-text">
 
                 <p class="text-justify">
-                    <p>It is a small to medium-sized evergreen tree growing up to 10–20 m (33–66 ft) high, with smooth
-                    gray bark and a uniform spherical to hemispherical crown. It is dioecious, with separate male and
-                    female plants. It tolerates poor acidic soils. The root system is 5–60 cm (2.0–23.6 in) deep,
-                with no obvious taproot.</p>
-                    <p>The fruit is spherical, 1.5–2.5 cm (0.59–0.98 in) in diameter, with a knobby surface. The surface
-                        color is typically a deep, brilliant red, but may vary from white to purple. The flesh color is
-                        similar to surface color, or somewhat lighter. The flesh is sweet and very tart. At the center
-                        is a single seed, with a diameter about half that of the whole fruit.</p>
-                      <p>  It is native to eastern Asia, mainly in south-central China where it has been grown for at least
-                        2000 years.[2] Chinese cultivation is concentrated south of the Yangtze River, where it has
-                        considerable economic importance. Its niche is forests on mountain slopes and valleys at
-                          altitudes of 100–1,500 metres (330–4,920 ft).</p>
+            <p>The Myricaceae family comprises three genera, of which Myrica, comprising approximately 50 species, is most
+                widely distributed across the warm, humid regions of Asia (e.g., China, Japan, and India), Europe (e.g.,
+                France, Norway, Switzerland, and Spain), Africa (e.g., Kenya), North America (e.g., USA), and South America
+                (e.g., Brazil). Chinese bayberry (Myrica rubra Sieb. & Zucc.) is an economically important fruit tree,
+                and its cultivation area in China is about 334,000 ha with an annual yield of 950,000 t, approximately. In
+                addition to producing flavorful fruit, different organs of Chinese bayberry are used in traditional Chinese
+                medicine. Chinese bayberry extracts contain antioxidants against inflammation, allergies, diabetes, cancer,
+                bacterial infections, and diarrhea, among other health issues. </p>
+
                 </p>
             </div>
 
 
             <div class="panel-body">
-                <form class="form-horizontal" id="form" method="get" action="/RiceRC/Search/searchBefore"
+                <form class="form-horizontal" id="form" method="get" action="/MRDB/search/searchBefore"
                 accept-charset="UTF-8" >
                     <input type="text" style="float: left;
                         height: 40px;" class="form-control"
-                    placeholder="e.g. PF00566 IPR000195 Rab-GTPase"
+                    placeholder="e.g. GO:0005524 K02111 ECO:0000255"
                     name="input" id="example">
                     <button type="submit"
                     style="float: left;
@@ -83,63 +80,65 @@
                     <div class="row">
 
                         <div class="col-md-3 res">
-                            <a href="#" class="resLink">
-                                <i class="fa fa-pencil" style="font-size: 50px"></i>
+                            <a href="@routes.GenomeController.browseBefore()" class="resLink">
+                                <i class="fa fa-eye" style="font-size: 50px"></i>
                                 <h3>Browse</h3>
                             </a>
                         </div>
 
                         <div class="col-md-3 res">
-                            <a href="#" class="resLink">
-                                <i class="fa fa-save" style="font-size: 50px"></i>
+                            <a href="@routes.GenomeController.conditionSearchBefore()" class="resLink">
+                                <i class="fa fa-search" style="font-size: 50px"></i>
+                                <h3>Condition Search</h3>
+                            </a>
+                        </div>
+
+                        <div class="col-md-3 res">
+                            <a href="http://210.22.121.250:20795/?data=my_data/MRDB/data" target="_blank" class="resLink">
+                                <i class="fa fa-database" style="font-size: 50px"></i>
+                                <h3>Genome Browser</h3>
+                            </a>
+                        </div>
+
+
+                        <div class="col-md-3 res">
+                            <a href="@routes.ToolsController.enrichmentBefore()" class="resLink">
+                                <i class="fa fa-wrench" style="font-size: 50px"></i>
+                                <h3>Enrichment Analysis</h3>
+                            </a>
+                        </div>
+
+                        <div class="col-md-3 res">
+                            <a href="@routes.ToolsController.blastBefore()" class="resLink">
+                                <i class="fa fa-search-plus" style="font-size: 50px"></i>
                                 <h3>Blast Search</h3>
                             </a>
                         </div>
 
-                        <div class="col-md-3 res">
-                            <a href="#" class="resLink">
-                                <i class="fa fa-random" style="font-size: 50px"></i>
-                                <h3>Structural Variation</h3>
-                            </a>
-                        </div>
+
 
 
 
                         <div class="col-md-3 res">
-                            <a href="#"  class="resLink">
+                            <a href="@routes.ToolsController.seqFetchBefore()"  class="resLink">
                                 <i class="fa fa-paper-plane" style="font-size: 50px"></i>
                                 <h3>Sequences Fetch</h3>
                             </a>
                         </div>
 
                         <div class="col-md-3 res">
-                            <a href="#" class="resLink">
-                                <i class="fa fa-eject" style="font-size: 50px"></i>
-                                <h3>Enrichment Analysis</h3>
+                            <a href="@routes.MapController.annotation()"  class="resLink">
+                                <i class="fa fa-picture-o" style="font-size: 50px"></i>
+                                <h3>Annotation Map</h3>
                             </a>
                         </div>
 
                         <div class="col-md-3 res">
-                            <a href="#" class="resLink">
-                                <i class="fa fa-download" style="font-size: 50px"></i>
-                                <h3>Download</h3>
+                            <a href="@routes.MapController.evolutionary()"  class="resLink">
+                                <i class="fa fa-file-picture-o" style="font-size: 50px"></i>
+                                <h3>Evolutionary Map</h3>
                             </a>
                         </div>
-
-                        <div class="col-md-3 res">
-                            <a href="#"  class="resLink">
-                                <i class="fa fa-phone" style="font-size: 50px"></i>
-                                <h3>Contact</h3>
-                            </a>
-                        </div>
-
-                        <div class="col-md-3 res">
-                            <a href="#"  class="resLink">
-                                <i class="fa fa-download" style="font-size: 50px"></i>
-                                <h3>Platform</h3>
-                            </a>
-                        </div>
-
 
 
                     </div>
@@ -165,7 +164,12 @@
                 </div>
                 <div class="panel-body">
                     <ul class="list-unstyled">
-                        <li><i class="fa fa-chevron-circle-right"></i> Genomes: 32</li>
+                        <li><i class="fa fa-chevron-circle-right"></i> Genomes: 2</li>
+                        <li><i class="fa fa-chevron-circle-right"></i> Genes: 26325</li>
+                        <li><i class="fa fa-chevron-circle-right"></i> Germplasm: 102</li>
+                        <li><i class="fa fa-chevron-circle-right"></i> SSR Markers: 59</li>
+                        <li><i class="fa fa-chevron-circle-right"></i> RNA-seq: 30</li>
+                        <li><i class="fa fa-chevron-circle-right"></i> Publications: 126</li>
                     </ul>
                 </div>
             </div>
@@ -177,8 +181,14 @@
                 <div class="panel-body">
                     <ul class="list-unstyled">
                         <li><i class="fa fa-chevron-circle-right"></i>
-                            Myruca Rybra database is available online on June 2019.
+                            <i>Myrica rubra</i> database is available online on Aug 2020.
                         </li>
+                        <li><i class="fa fa-chevron-circle-right"></i>
+
+                                <i>Myrica rubra</i> genome is published in BMC Genomics. [June 2019] <a href="https://pubmed.ncbi.nlm.nih.gov/31170907/" target="_blank" style="color: black">[Full Text] </a>.
+
+                        </li>
+
                     </ul>
                 </div>
             </div>
@@ -196,17 +206,14 @@
         font-weight: 300;
         color: black;
         text-align: center;">
-        <hr>
-
-
-            &nbsp;&nbsp;&nbsp;&nbsp;Copyright © <a href="https://rice.sicau.edu.cn/" target="_blank">XXXXXXXXXXXX</a> Copyright 2011 Auto Parts All Right Reserved
-
+        <hr><a href="https://beian.miit.gov.cn" target="_blank">沪ICP备17011715号-12</a>
+        |  COPYRIGHT @@ ZheJiang Academy Of Agricultural Sciences.
 </div>
 
     <script>
 
         function showExample() {
-            $("#example").val("PF00566 IPR000195 Rab-GTPase");
+            $("#example").val("GO:0005524 K02111 ECO:0000255");
         }
 
 

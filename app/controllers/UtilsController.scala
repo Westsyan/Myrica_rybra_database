@@ -4,25 +4,43 @@ import java.io.File
 import java.nio.file.Files
 
 import javax.inject.{Inject, Singleton}
-import play.api.mvc.{AbstractController, ControllerComponents, RangeResult}
-import utils.Utils
+import play.api.libs.json.Json
+import play.api.mvc.{AbstractController, Action, AnyContent, ControllerComponents, RangeResult}
+import utils.{TableUtils, Utils}
 
 import scala.concurrent.ExecutionContext
 
-case class PageData(limit: Int, offset: Int, order: String, search: Option[String], sort: Option[String])
-
 @Singleton
-class UtilsController@Inject()(cc:ControllerComponents)(implicit exec:ExecutionContext) extends AbstractController(cc) {
+class UtilsController @Inject()(cc: ControllerComponents)
+                               (implicit exec: ExecutionContext) extends AbstractController(cc) {
 
-  def getImageByPhotoId(id: Int, types: String) = Action { implicit request =>
+
+  def getAllChr: Action[AnyContent] = Action { implicit request =>
+    Ok(Json.toJson(TableUtils.chrMap))
+  }
+
+  def getAllGeneId: Action[AnyContent] = Action { implicit request =>
+    Ok(Json.toJson(TableUtils.geneIdSeq))
+  }
+
+  def getEgGene: Action[AnyContent] = Action { implicit request =>
+    Ok(Json.toJson(TableUtils.geneIdSeq.take(10)))
+  }
+
+
+  def getImageByPhotoId(name:String) = Action { implicit request =>
     val ifModifiedSinceStr = request.headers.get(IF_MODIFIED_SINCE)
 
-    val path = ""
+    val path = Utils.path + "/images/" + name
 
-    val file = new File(path)
+    val file =if(new File(path).exists()){
+      new File(path)
+    }else{
+      new File(Utils.path + "/images/zanwu.jpg")
+    }
 
     val lastModifiedStr = file.lastModified().toString
-    val MimeType = "image/png"
+    val MimeType = "image/jpg"
     val byteArray = Files.readAllBytes(file.toPath)
     if (ifModifiedSinceStr.isDefined && ifModifiedSinceStr.get == lastModifiedStr) {
       NotModified
@@ -56,19 +74,28 @@ class UtilsController@Inject()(cc:ControllerComponents)(implicit exec:ExecutionC
       CONTENT_DISPOSITION -> ("attachment; filename=" + filename),
       CONTENT_TYPE -> "application/x-download"
     )
-    /*  Ok.sendFile(new File(url)).withHeaders(
-//      ACCEPT_RANGES -> "bytes",
-    //缓存
-    CACHE_CONTROL -> "no-cache",
-      //打开类型,inline:直接网页打开，attachment:下载
- //   CONTENT_DISPOSITION -> ("inline; filename=" + filename),
+  }
 
-    CONTENT_RANGE -> length,
-    CONTENT_TYPE -> "application/octet-stream"
-    //断点续传
- //   CONTENT_ENCODING -> "gzip",
- //   VARY  -> ACCEPT_ENCODING
-  )*/
+  def downloadPdf(file: String) = Action { implicit request =>
+    val name = file.split("/").last
+    val filename = new String(("attachment;filename=\"" + name + "\"").getBytes("GBK"), "ISO_8859_1")
+    Ok.sendFile(new File(Utils.path + "/reference/" + file)).withHeaders(
+      //缓存
+      CACHE_CONTROL -> "max-age=3600",
+      CONTENT_DISPOSITION -> filename,
+      CONTENT_TYPE -> "application/x-download"
+    )
+  }
+
+  def openPdf(file: String) = Action { implicit request =>
+    val name = file.split("/").last
+    val filename = new String(("filename=\"" + name + "\"").getBytes("GBK"), "ISO-8859-1")
+    Ok.sendFile(new File(Utils.path + "/reference/" + file)).withHeaders(
+      //缓存
+      CACHE_CONTROL -> "max-age=3600",
+      CONTENT_DISPOSITION -> filename,
+      CONTENT_TYPE -> "text/plain"
+    )
   }
 
 }

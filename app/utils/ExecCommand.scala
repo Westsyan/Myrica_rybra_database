@@ -12,6 +12,7 @@ class ExecCommand {
 
   def exec(command: String) = {
     val exitCode = command ! log
+    println(getInfo(command, exitCode))
     if (exitCode == 0) isSuccess = true
   }
 
@@ -33,6 +34,7 @@ class ExecCommand {
 
   def execo(command: String, outFile: File) = {
     val exitCode = (command #> outFile) ! log
+    println(getInfo(command, exitCode))
     if (exitCode == 0) isSuccess = true
   }
 

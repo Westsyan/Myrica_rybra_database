@@ -4,22 +4,73 @@
 # ~~~~
 
 
-GET         /                                         controllers.HomeController.index
+GET         /                                           controllers.HomeController.index
 
-GET         /MRDB/genome/conditionSearchBefore        controllers.GenomeController.conditionSearchBefore
+GET         /MRDB/reference/reference                   controllers.HomeController.reference
+POST        /MRDB/reference/getReference                controllers.HomeController.getReference
+GET         /MRDB/reference/updateRefer                 controllers.HomeController.updateRefer
 
+GET         /MRDB/contact/contactPage                   controllers.HomeController.contactPage
 
-GET         /MRDB/tools/blastBefore                   controllers.ToolsController.blastBefore
-POST        /MRDB/tools/blastRun                      controllers.ToolsController.blastRun
-GET         /MRDB/tools/blastResultBefore             controllers.ToolsController.blastResultBefore(path:String)
-POST        /MRDB/tools/blastResult                   controllers.ToolsController.blastResult(path:String)
+GET         /MRDB/genome/browseBefore                   controllers.GenomeController.browseBefore
+POST        /MRDB/genome/getAllGenome                   controllers.GenomeController.getAllGenome
+GET         /MRDB/genome/moreInfo                       controllers.GenomeController.moreInfo(gene:String)
 
-GET         /MRDB/tools/seqFetchBefore                controllers.ToolsController.seqFetchBefore
-POST        /MRDB/tools/seqRegion                     controllers.ToolsController.seqRegion
+GET         /MRDB/genome/conditionSearchBefore          controllers.GenomeController.conditionSearchBefore
+POST        /MRDB/genome/searchById                     controllers.GenomeController.searchById
+POST        /MRDB/genome/searchByRegion                 controllers.GenomeController.searchByRegion
+GET         /MRDB/genome/charts                         controllers.GenomeController.charts(id:Int)
 
-GET         /MRDB/tools/enrichmentBefore              controllers.ToolsController.enrichmentBefore
+GET         /MRDB/tools/blastBefore                     controllers.ToolsController.blastBefore
+POST        /MRDB/tools/blastRun                        controllers.ToolsController.blastRun
+GET         /MRDB/tools/blastResultBefore               controllers.ToolsController.blastResultBefore(path:String,types:String)
+POST        /MRDB/tools/blastResult                     controllers.ToolsController.blastResult(path:String)
+
+GET         /MRDB/tools/seqFetchBefore                  controllers.ToolsController.seqFetchBefore
+POST        /MRDB/tools/seqRegion                       controllers.ToolsController.seqRegion
+
+GET         /MRDB/tools/enrichmentBefore                controllers.ToolsController.enrichmentBefore
+POST        /MRDB/tools/enrichment                      controllers.ToolsController.enrichment
+
+GET         /MRDB/expression/expressionBefore           controllers.ExpressionController.expressionBefore
+POST        /MRDB/expression/getAllExpression           controllers.ExpressionController.getAllExpression
+POST        /MRDB/expression/getColumnChartsData        controllers.ExpressionController.getColumnChartsData(id:Int)
+
+GET         /MRDB/map/annotation                        controllers.MapController.annotation
+GET         /MRDB/map/evolutionary                      controllers.MapController.evolutionary
+GET         /MRDB/map/genetic                           controllers.MapController.genetic
+
+GET         /MRDB/search/searchBefore                   controllers.SearchController.searchBefore(input:String)
+POST        /MRDB/search/getResult                      controllers.SearchController.getResult(tp:String = "All",input:String)
+
+POST        /MRDB/utils/getAllChr                       controllers.UtilsController.getAllChr
+POST        /MRDB/utils/getAllGeneId                    controllers.UtilsController.getAllGeneId
+POST        /MRDB/utils/getEgGene                       controllers.UtilsController.getEgGene
+
+GET         /MRDB/utils/downloadPdf                     controllers.UtilsController.downloadPdf(file:String)
+GET         /MRDB/utils/openPdf                         controllers.UtilsController.openPdf(file:String)
+GET         /MRDB/utils/getImageByPhotoId               controllers.UtilsController.getImageByPhotoId(name:String)
+
+GET         /MRDB/germ/germBefore                       controllers.GermController.germBefore
+POST        /MRDB/germ/getAllGerm                       controllers.GermController.getAllGerm
+GET         /MRDB/germ/moreGermInfo                     controllers.GermController.moreGermInfo(id:Int)
+
+GET         /MRDB/insert/insertGenome                   controllers.InsertController.insertGenome
+GET         /MRDB/insert/insertGeneSeq                  controllers.InsertController.insertGeneSeq
+GET         /MRDB/insert/insertExpression               controllers.InsertController.insertExpression
+GET         /MRDB/insert/insertGerm                     controllers.InsertController.insertGerm
+
+GET         /blast/downloadBlastByRange                 controllers.BlastController.downloadBlastByRange(name:String,range:String,blastType:String)
+GET         /blast/downloadBlastByName                  controllers.BlastController.downloadBlastByName(name:String,blastType:String)
+
+GET         /MRDB/markers/markersPage                   controllers.MarkersController.markers
+POST        /MRDB/markers/getAll                        controllers.MarkersController.getAll
+
+GET         /updateSwiss                                controllers.GenomeController.updateSwiss
+GET         /updateSwiss2                               controllers.GenomeController.updateSwiss2
+GET         /updateTrembl                               controllers.GenomeController.updateTrembl
 
 # Map static resources from the /public folder to the /assets URL path
-GET         /assets/*file                             controllers.Assets.versioned(path="/public", file: Asset)
+GET         /assets/*file                               controllers.Assets.versioned(path="/public", file: Asset)
 
       

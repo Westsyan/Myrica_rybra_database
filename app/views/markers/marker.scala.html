@@ -1,0 +1,61 @@
+@()(implicit session: Session)
+@home.main("Genomic SSR markers") {
+
+    <style>
+
+        .table>tbody>tr>td:nth-child(2){
+            font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
+        }
+
+
+        .table>tbody>tr>td:nth-child(3){
+            font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
+        }
+
+    </style>
+
+    <div class="row">
+        <div class="form-group col-sm-12">
+            <h2 class="page-heading">Genomic SSR markers</h2>
+        </div>
+    </div>
+
+    <div id="toolbar">
+            &nbsp;Keyword：
+    </div>
+
+    <table class="display table table-bordered" id="table" data-pagination="true" data-search="true"
+    data-toolbar="#toolbar" data-page-list="[10, 25, 50, 100, all]" data-search-align="left" data-multiple-search="true"
+    >
+        <thead>
+            <tr>
+                <th data-field='name' data-sortable='true' >Name</th>
+                <th data-field='forward' data-sortable='true' >Forward</th>
+                <th data-field='reverse' data-sortable='true' >Reverse</th>
+                <th data-field='tm' data-sortable='true' >Tm/℃</th>
+                <th data-field='bp' data-sortable='true' >bp Product</th>
+                <th data-field='na' data-sortable='true' >N<sub>a</sub></th>
+                <th data-field='ne' data-sortable='true' >N<sub>e</sub></th>
+                <th data-field='h' data-sortable='true' >h<sub>*</sub></th>
+                <th data-field='pic' data-sortable='true' >PIC</th>
+            </tr>
+        </thead>
+
+    </table>
+
+
+    <script>
+
+            $(function () {
+                $.post("@routes.MarkersController.getAll()",(data)=>{
+                    $("#table").bootstrapTable({data:data})
+                })
+
+
+
+            })
+
+    </script>
+
+
+}

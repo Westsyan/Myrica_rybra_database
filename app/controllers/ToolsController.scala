@@ -7,14 +7,15 @@ import javax.inject.{Inject, Singleton}
 import org.apache.commons.io.FileUtils
 import play.api.data.Form
 import play.api.data.Forms._
-import play.api.libs.json.Json
+import play.api.libs.json.{JsObject, Json}
 import play.api.mvc._
-import utils.{EncodingDetect, ExecCommand, Utils}
+import utils.{ExecCommand, Utils}
 
 import scala.collection.JavaConverters._
+import scala.collection.mutable
 
 @Singleton
-class ToolsController@Inject()(cc: ControllerComponents) extends AbstractController(cc) {
+class ToolsController @Inject()(cc: ControllerComponents) extends AbstractController(cc) {
 
   def blastBefore: Action[AnyContent] = Action { implicit request =>
     Ok(views.html.tools.blast())
@@ -40,7 +41,7 @@ class ToolsController@Inject()(cc: ControllerComponents) extends AbstractControl
     val seqFile = new File(tmpDir, "seq.fa")
     data.method match {
       case "text" =>
-        FileUtils.writeStringToFile(seqFile, data.queryText,EncodingDetect.getJavaEncode(seqFile.getAbsolutePath))
+        FileUtils.writeStringToFile(seqFile, data.queryText)
       case "file" =>
         val file = request.body.file("file").get
         file.ref.moveTo(seqFile, replace = true)
@@ -57,52 +58,49 @@ class ToolsController@Inject()(cc: ControllerComponents) extends AbstractControl
       case "blastx" => "blastx"
     }
 
-    val blast2Html = data.blastType match {
-      case "blastx" => "blastx2html"
-      case _ => "blast2html"
-    }
 
-    val database = Utils.path + "/blastData/" + data.db
+    val database = Utils.path + "/blastData/" + data.db +"/myrica"
 
-
-    val command1 = Utils.path + "/tools/ncbi-blast-2.6.0+/bin/%s%s -query ".format(blastType, Utils.suffix) + seqFile.getAbsolutePath + " -subject " +
-      database + " -outfmt 5 -evalue " + data.evalue + " -max_target_seqs " + data.maxTargetSeqs +
+    val command1 = Utils.path + "/tools/ncbi-blast-2.6.0+/bin/%s%s -query ".format(blastType, Utils.suffix) + seqFile.getAbsolutePath +
+      " -db " + database + " -outfmt 5 -evalue " + data.evalue + " -max_target_seqs " + data.maxTargetSeqs +
       " -word_size " + data.wordSize + " -out " + outXml.getAbsolutePath
-    val command2 = "python " + Utils.path + s"/tools/blast2html/$blast2Html.py -i " + outXml.getAbsolutePath + " -o " + outHtml.getAbsolutePath + " --template %s/tools/blast2html/%s.jinja".format(Utils.path, blastType)
-    val btt = Utils.path + "/tools/Blast2table -format 10 -xml " + outXml.getAbsolutePath + " -header -top > " + outTable.getAbsoluteFile
-    val bttf = new File(tmpDir, "blastToTable.sh")
+    val command2 = "python " + Utils.path + "/tools/blast2html/blast2html.py -i " + outXml.getAbsolutePath + " -o " +
+      outHtml.getAbsolutePath + " --template %s/tools/blast2html/%s.jinja".format(Utils.path, blastType)
+    val command3 = "perl " + Utils.path + "/tools/Blast2table -format 10 -xml " + outXml.getAbsolutePath + " -header "
 
 
-    FileUtils.writeStringToFile(bttf, btt)
-    val command3 = "sh " + bttf.getAbsoluteFile
-    execCommand.exect(Array(command1, command2), tmpDir)
+    execCommand.exect(Array(command1, command2, command3), tmpDir)
     if (execCommand.isSuccess) {
-      //  val excel = FileUtils.readFileToString(outTable)
-      val excel = ""
-
-      Ok(Json.obj("html" -> tmpDir.replaceAll("\\\\","/"), "excel" -> excel))
+      val excel = execCommand.getOutStr
+      FileUtils.writeStringToFile(outTable,excel)
+      Ok(Json.obj("html" -> tmpDir.replaceAll("\\\\", "/"), "excel" -> excel, "types" -> data.db))
     } else {
       Utils.deleteDirectory(tmpDir)
       Ok(Json.obj("valid" -> "false", "message" -> execCommand.getErrStr))
     }
   }
 
-  def blastResultBefore(path:String): Action[AnyContent] = Action{ implicit request=>
-    Ok(views.html.tools.blastResult(path))
+  def blastResultBefore(path: String,types:String): Action[AnyContent] = Action { implicit request =>
+    Ok(views.html.tools.blastResult(path,types))
   }
 
-  def blastResult(path:String): Action[AnyContent] = Action{ implicit request=>
-    val html = Utils.readFileToString(new File(path + "/out.html"))
+  def blastResult(path: String): Action[AnyContent] = Action { implicit request =>
+    var html = Utils.readFileToString(new File(path + "/out.html"))
+
+    //由于MORELLA建库不成功，所以加了前缀
+    if(html.contains("morella")||html.contains("MORELLA")){
+     html = html.replaceAll("morella","").replaceAll("MORELLA","")
+    }
     Utils.deleteDirectory(path)
-    Ok(Json.obj("html" -> (html + "\n" + Utils.scriptHtml )))
+    Ok(Json.obj("html" -> (html + "\n" + Utils.scriptHtml)))
   }
 
 
-  def seqFetchBefore: Action[AnyContent] = Action{ implicit request=>
+  def seqFetchBefore: Action[AnyContent] = Action { implicit request =>
     Ok(views.html.tools.seqFetch())
   }
 
-  case class regData(species:String,region: String)
+  case class regData(species: String, region: String)
 
   val regForm = Form(
     mapping(
@@ -116,28 +114,23 @@ class ToolsController@Inject()(cc: ControllerComponents) extends AbstractControl
     val tmpDir = Files.createTempDirectory("tmpDir").toString
     val outFile = new File(tmpDir, "data.txt")
     val execCommand = new ExecCommand()
-    val command = if(new File(Utils.windowsPath).exists()){
-      Utils.path + "/tools/samtools-0.1.19/samtools.exe faidx "+ Utils.path + "/blastData/" + data.species+" " + data.region
-    }else{
-      "samtools faidx " + Utils.path + "/blastData/" + data.species+" " + data.region
+    val command = if (new File(Utils.windowsPath).exists()) {
+      Utils.path + "/tools/samtools-0.1.19/samtools.exe faidx " + Utils.path + "/blastData/" + "Myrica.genome" + " " + data.region
+    } else {
+      "samtools faidx " + Utils.path + "/blastData/" + "Myrica.genome" + " " + data.region
     }
     execCommand.execo(command, outFile)
-    if (execCommand.isSuccess) {
-      val dataStr = Utils.readFileToString(outFile)
-      Utils.deleteDirectory(tmpDir)
-      Ok(Json.obj("valid" -> "true", "data" -> dataStr))
-    } else {
-      Utils.deleteDirectory(tmpDir)
-      Ok(Json.obj("valid" -> "false", "message" -> execCommand.getErrStr))
-    }
+    val (status, dataStr) = if (execCommand.isSuccess) (1, Utils.readFileToString(outFile)) else (0, "")
+    Utils.deleteDirectory(tmpDir)
+    Ok(Json.obj("status" -> status, "data" -> dataStr, "message" -> execCommand.getErrStr))
   }
 
 
-  def enrichmentBefore: Action[AnyContent] = Action{ implicit request=>
+  def enrichmentBefore: Action[AnyContent] = Action { implicit request =>
     Ok(views.html.tools.enrichment())
   }
 
-  case class enrichData(method:String,dataType:String,gene:String,db:String,pValue:String)
+  case class enrichData(method: String, dataType: String, gene: String, db: String, pValue: String)
 
   val enrichForm = Form(
     mapping(
@@ -150,7 +143,7 @@ class ToolsController@Inject()(cc: ControllerComponents) extends AbstractControl
   )
 
 
-  def enrichment = Action(parse.multipartFormData){implicit request=>
+  def enrichment = Action(parse.multipartFormData) { implicit request =>
     val data = enrichForm.bindFromRequest.get
     val tmpDir = Files.createTempDirectory("tmpDir").toString
     val seqFile = new File(tmpDir, "tmp.txt")
@@ -163,16 +156,16 @@ class ToolsController@Inject()(cc: ControllerComponents) extends AbstractControl
         file.ref.moveTo(seqFile, replace = true)
     }
 
-    data.method match{
-      case "kegg" => kegg(data,tmpDir,seqFile.getAbsolutePath)
-      case "go" => go(data,tmpDir,seqFile.getAbsolutePath)
+    data.method match {
+      case "kegg" => kegg(data, tmpDir, seqFile.getAbsolutePath)
+      case "go" => go(data, tmpDir, seqFile.getAbsolutePath)
     }
   }
 
-  def kegg(data:enrichData,tmpDir:String,study:String): Result = {
+  def kegg(data: enrichData, tmpDir: String, study: String): Result = {
 
-    val population = Utils.enrichPath +  data.db +"_gene.xls"
-    val association = Utils.enrichPath +  data.db +"_kegg.xls"
+    val population = Utils.enrichPath + "gene.txt"
+    val association = Utils.enrichPath + "kegg.txt"
 
     val output = new File(tmpDir, "KEGG_enrichment.txt")
     val o = output.getAbsolutePath
@@ -182,7 +175,8 @@ class ToolsController@Inject()(cc: ControllerComponents) extends AbstractControl
     val command = "perl " + Utils.path + "/tools/identify.pl -study=" + study + " -population=" + population +
       " -association=" + association + " -m=b" + " -n=BH" + " -o=" + o + " -c=5" + " -maxp=" + data.pValue
     execCommand.exect(command, tmpDir)
-    if (execCommand.isSuccess) {
+
+    val (status, jsons) = if (execCommand.isSuccess) {
       val keggInfo = Utils.readLines(output)
       val json = keggInfo.filter(_.split("\t").length == 9).map { x =>
         val all = x.split("\t")
@@ -190,40 +184,36 @@ class ToolsController@Inject()(cc: ControllerComponents) extends AbstractControl
         Json.obj("term" -> all.head, "database" -> all(1), "id" -> all(2), "input_num" -> all(3), "back_num" -> all(4),
           "p-value" -> all(5), "correct_pval" -> all(6), "input" -> all(7), "hyperlink" -> hyper)
       }.drop(1)
-      Utils.deleteDirectory(tmpDir)
-      Ok(Json.toJson(json))
-    } else {
-      Utils.deleteDirectory(tmpDir)
-      Ok(Json.obj("valid" -> "false", "message" -> execCommand.getErrStr))
-    }
+      (1, json)
+    } else (0, mutable.Buffer[JsObject]())
+
+    Utils.deleteDirectory(tmpDir)
+    Ok(Json.obj("status" -> status, "data" -> jsons, "message" -> execCommand.getErrStr))
   }
 
-  def go(data:enrichData,tmpDir:String,study:String): Result = {
+  def go(data: enrichData, tmpDir: String, study: String): Result = {
 
-    val population = Utils.enrichPath + data.db +"_gene.xls"
-    val association = Utils.enrichPath + data.db +"_go.xls"
+    val population = Utils.enrichPath + "gene.txt"
+    val association = Utils.enrichPath + "go.txt"
 
     val o = new File(tmpDir, "GO_enrichment.txt")
     val execCommand = new ExecCommand
     val command = "python " + Utils.path + "/tools/goatools-0.5.7/scripts/find_enrichment.py --alpha=0.05 " +
       " --pval=" + data.pValue + " --output " + o.getAbsolutePath + " " + study + " " + population + " " + association
     execCommand.exect(command, tmpDir)
-    if (execCommand.isSuccess) {
-      val goInfo = Utils.readLines(o)
-      val buffer = goInfo.drop(1)
-      val json = buffer.map { x =>
+    val (status, jsons) = if (execCommand.isSuccess) {
+      val goInfo = Utils.readLines(o).drop(1)
+      val json = goInfo.map { x =>
         val all = x.split("\t")
         val goLink = "<a target='_blank' href='http://amigo.geneontology.org/amigo/term/" + all(0) + "'>" + all(0) + "</a>"
         Json.obj("id" -> goLink, "enrichment" -> all(1), "description" -> all(2), "ratio_in_study" -> all(3),
           "ratio_in_pop" -> all(4), "p_uncorrected" -> all(5), "p_bonferroni" -> all(6), "p_holm" -> all(7),
           "p_sidak" -> all(8), "p_fdr" -> all(9), "namespace" -> all(10), "genes_in_study" -> all(11))
       }
-      Utils.deleteDirectory(tmpDir)
-      Ok(Json.toJson(json))
-    } else {
-      Utils.deleteDirectory(tmpDir)
-      Ok(Json.obj("valid" -> "false", "message" -> execCommand.getErrStr))
-    }
+      (1, json)
+    } else (0, mutable.Buffer[JsObject]())
+    Utils.deleteDirectory(tmpDir)
+    Ok(Json.obj("status" -> status, "data" -> jsons, "message" -> execCommand.getErrStr))
   }
 
 }

@@ -5,7 +5,6 @@ import java.lang.reflect.Field
 import java.text.SimpleDateFormat
 import java.util.Date
 
-import controllers.PageData
 import org.apache.commons.io.FileUtils
 import org.joda.time.DateTime
 import play.api.libs.json.JsObject
@@ -180,8 +179,8 @@ object Utils {
 
 
 
-  val windowsPath = "F:\\database\\RiceRC"
-  val linuxPath = "/home/user/projects/RiceRC"
+  val windowsPath = "I:\\MRDB"
+  val linuxPath = "/mnt/vdb/xwq/projects/MRDB"
   val path : String= {
     if (new File(windowsPath).exists()) windowsPath else linuxPath
   }

@@ -1,0 +1,277 @@
+@()(implicit session: Session)
+@home.main("Germ Plasm") {
+
+    <style>
+            td, th {
+                text-align: center;
+                vertical-align: middle !important;
+            }
+    </style>
+
+    <div class="row">
+        <div class="form-group col-sm-12">
+            <h2 class="page-heading"
+            style="text-align: left;
+                border-bottom: 5px solid #e9f3f4">Germplasm</h2>
+        </div>
+    </div>
+
+
+    <div id="charts">
+        <img src="/assets/images/timg2.gif" width="70px">Loading...
+    </div>
+
+    <div style="display: none;" id="showTable">
+        <label>Select the columns to display:</label>
+        <div id="checkbox" class="checkbox">
+
+        </div>
+
+        <div id="toolbar"></div>
+
+        <table class="display table table-bordered" id="table" data-pagination="true" data-search="true"
+        data-toolbar="#toolbar" data-page-list="[10, 25, 50, 100, all]" data-search-align="left" data-multiple-search="true"
+        data-show-export="false" data-export-types="['excel','txt']" data-export-data-type="all"
+        >
+            <thead>
+                <tr>
+                    <th data-field="name" data-sortable="true" id="name">Name</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+
+
+    <script>
+
+            $(function () {
+
+
+                checkBox();
+                hidden();
+
+                $.ajax({
+                    url: "@routes.GermController.getAllGerm()",
+                    type: "post",
+                    dataType: "json",
+                    success: function (data) {
+                        $("#table").bootstrapTable("load",data);
+                        $("#charts").hide();
+                        $("#showTable").show();
+
+                    }
+                });
+
+
+            });
+
+
+            function checkBox() {
+
+                var array = ["Plant sex", "Place of origin", "Longitude", "Latitude", "Germplasm type", "Resource Field",
+                    "Tree height", "Tree vigor", "Leaf shape", "Early flowering stage", "Peak flowering stage",
+                    "Maturation stage", "Single fruit weight (g)", "Fruit shape", "Fruit color", "Total soluble solid(%)",
+                    "Comprehensive evaluation of quality", "Storage and transportation resistance", "Disease resistance",
+                    "Images"];
+                var values = ["classes", "location", "longitude", "latitude", "germClasses", "saveLocation", "height",
+                    "vigor", "bladeShape", "beginTime", "fullTime", "matureTime", "weight", "shape", "color",
+                    "solubleSolid", "evaluate", "store", "disease","image"];
+                var tHtml = "";
+                $.each(array, function (i, v) {
+                    tHtml += "<th data-field='" + values[i] + "' data-sortable='true'>" + v + "</th>"
+                });
+
+                $("#name").after(tHtml);
+
+                var html = "";
+                $.each(array, function (n, value) {
+                            html += "<label style='margin-right: 15px'>" +
+                                    "<input type='checkbox' checked='checked' value='" + values[n] + "' onclick=\"setColumns('" + values[n] + "')\">" + value +
+                                    "</label>"
+                        }
+                );
+                $("#checkbox").append(html);
+
+
+
+                $("#table").bootstrapTable({
+                    columns:[
+                        {
+                            field:"id",
+                            title:"ID",
+                            formatter: function (value, row) {
+                                if(row.id < 10){
+                                    return "GP0000" + row.id;
+                                }else if(row.id > 99){
+                                    return "GP00" + row.id;
+                                }else{
+                                    return "GP000" + row.id;
+                                }
+                            }
+                        },
+                        {
+                            field:"name",
+                            title:"Name",
+                            formatter: function (value, row) {
+                                return "<a href='/MRDB/germ/moreGermInfo?id=" + row.id + "' target='_blank'>" + row.name + "</a>";
+                            }
+                        }, {
+                            field: "classes",
+                            title: "Plant sex",
+                            align:"center",
+                            halign:"center",
+                            valign:"middle"
+                        }, {
+                            field: "location",
+                            title: "Place of origin",
+                            align:"center",
+                            halign:"center",
+                            valign:"middle"
+                        }, {
+                            field: "longitude",
+                            title: "Longitude",
+                            align:"center",
+                            halign:"center",
+                            valign:"middle"
+                        }, {
+                            field: "latitude",
+                            title: "Latitude",
+                            align:"center",
+                            halign:"center",
+                            valign:"middle"
+                        }, {
+                            field: "germClasses",
+                            title: "Germplasm type",
+                            align:"center",
+                            halign:"center",
+                            valign:"middle"
+                        }, {
+                            field: "saveLocation",
+                            title: "Resource Field",
+                            align:"center",
+                            halign:"center",
+                            valign:"middle"
+                        }, {
+                            field: "height",
+                            title: "Tree height",
+                            align:"center",
+                            halign:"center",
+                            valign:"middle"
+                        }, {
+                            field: "vigor",
+                            title: "Tree vigor",
+                            align:"center",
+                            halign:"center",
+                            valign:"middle"
+                        }, {
+                            field: "bladeShape",
+                            title: "Leaf shape",
+                            align:"center",
+                            halign:"center",
+                            valign:"middle"
+                        }, {
+                            field: "beginTime",
+                            title: "Early flowering stage",
+                            align:"center",
+                            halign:"center",
+                            valign:"middle"
+                        }, {
+                            field: "fullTime",
+                            title: "Peak flowering stage",
+                            align:"center",
+                            halign:"center",
+                            valign:"middle"
+                        }, {
+                            field: "matureTime",
+                            title: "Maturation stage",
+                            align:"center",
+                            halign:"center",
+                            valign:"middle"
+                        }, {
+                            field: "weight",
+                            title: "Single fruit weight (g)",
+                            align:"center",
+                            halign:"center",
+                            valign:"middle"
+                        }, {
+                            field: "shape",
+                            title: "Fruit shape",
+                            align:"center",
+                            halign:"center",
+                            valign:"middle"
+                        }, {
+                            field: "color",
+                            title: "Fruit color",
+                            align:"center",
+                            halign:"center",
+                            valign:"middle"
+                        }, {
+                            field: "solubleSolid",
+                            title: "Total soluble solid(%)",
+                            align:"center",
+                            halign:"center",
+                            valign:"middle"
+                        }, {
+                            field: "evaluate",
+                            title: "Comprehensive evaluation of quality",
+                            align:"center",
+                            halign:"center",
+                            valign:"middle"
+                        }, {
+                            field: "store",
+                            title: "Storage and transportation resistance",
+                            align:"center",
+                            halign:"center",
+                            valign:"middle"
+                        }, {
+                            field: "disease",
+                            title: "Disease resistance",
+                            align:"center",
+                            halign:"center",
+                            valign:"middle"
+                        }, {
+                            field:"image",
+                            title:"Image",
+                            formatter: function (value, row) {
+                                if(row.images){
+                                    return "<a href='/MRDB/utils/getImageByPhotoId?name=" + row.id +".JPG' target='_blank'>" +
+                                            "<img src='/MRDB/utils/getImageByPhotoId?name=" + row.id + "_min.JPG' width='200px'/>" ;
+                                }else{
+                                    return  "NA";
+                                }
+
+                            }
+                        }
+                    ]
+
+                });
+
+            }
+
+            function hidden() {
+                var hiddenArray = ["longitude", "latitude", "germClasses", "saveLocation", "beginTime", "fullTime", "matureTime",
+                     "weight", "shape", "solubleSolid", "evaluate", "store", "disease"];
+
+                $.each(hiddenArray, function (n, value) {
+                            $('#table').bootstrapTable('hideColumn', value);
+
+                            $("input:checkbox[value=" + value + "]").attr("checked", false)
+
+
+                        }
+                );
+
+            }
+
+            function setColumns(value) {
+                var element = $("input:checkbox[value=" + value + "]");
+                if (element.is(":checked")) {
+                    $('#table').bootstrapTable('showColumn', value);
+                } else {
+                    $('#table').bootstrapTable('hideColumn', value);
+                }
+            }
+
+    </script>
+
+}

@@ -13,6 +13,7 @@ dist
 /.project
 /RUNNING_PID
 /.settings
-conf/application.conf
+conf
 app/utils/SlickCodegen.scala
 public
+app/test

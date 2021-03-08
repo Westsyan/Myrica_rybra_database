@@ -1,0 +1,99 @@
+@()(implicit session: Session)
+@home.main("Expression") {
+
+    <div class="row">
+        <div class="form-group col-sm-12">
+            <h2 class="page-heading">Expression</h2>
+        </div>
+    </div>
+
+
+        <label>Select the columns to display:</label>
+    <div id="checkbox" class="checkbox">
+
+    </div>
+
+    <div id="toolbar">
+            &nbsp;Keyword：
+    </div>
+
+            <table class="display table table-bordered" id="table" data-pagination="true" data-search="true"
+            data-toolbar="#toolbar" data-page-list="[10, 25, 50, 100, all]" data-search-align="left" data-multiple-search="true"
+            >
+                <thead>
+                    <tr>
+                        <th data-field='geneid' data-sortable='true' id="marker">GeneID</th>
+                    </tr>
+                </thead>
+
+            </table>
+
+    <script>
+
+        $(function () {
+
+            var array = ["T01", "T02", "T03", "T04", "T05", "T06", "T07", "T08", "T09", "T10", "T11", "T12", "T13", "T14",
+                "T15", "T16", "T17", "T18", "T19", "T20", "T21", "T22", "T23", "T24", "T25", "T26", "T27", "T28", "T29", "T30"];
+
+            var tHtml = "";
+            $.each(array, function (i, v) {
+                tHtml += "<th data-field='" + v + "'>" + v + "</th>"
+            });
+
+            $("#marker").after(tHtml);
+
+            var html = "";
+            $.each(array, function (n, v) {
+                        html += "<label style='margin-right: 15px'>" +
+                                "<input type='checkbox' checked='checked' value='" + v + "' onclick=\"setColumns('" + v + "')\">" + v +
+                                "</label>"
+                    }
+            );
+            $("#checkbox").append(html);
+
+            $('#table').bootstrapTable({
+                method: 'post',
+                url: "@routes.ExpressionController.getAllExpression()",
+                sidePagination: "server",
+                pageNumber: 1,
+                pagination: true,
+                pageList: [10, 25],
+                contentType: "application/x-www-form-urlencoded",
+                columns:[
+                    {
+                        field:"geneid",
+                        title:"GeneID",
+                        formatter: function (value, row) {
+                            return "<p><a href='/MRDB/genome/moreInfo?gene=ID_" + row.id + "' target='_blank'>" + row.geneid + "</a></p>";
+                        }
+                    }
+                ]
+            });
+
+
+        });
+
+        function hidden() {
+            var hiddenArray = ["cogAnno", "kogAnno", "pfam", "trembl", "nr"];
+
+            $.each(hiddenArray, function (n, value) {
+                        $('#table').bootstrapTable('hideColumn', value);
+                        $("input:checkbox[value=" + value + "]").attr("checked", false)
+                    }
+            );
+        }
+
+        function setColumns(value) {
+            var element = $("input:checkbox[value=" + value + "]");
+            if (element.is(":checked")) {
+                $('#table').bootstrapTable('showColumn', value);
+            } else {
+                $('#table').bootstrapTable('hideColumn', value);
+            }
+        }
+
+
+    </script>
+
+
+}

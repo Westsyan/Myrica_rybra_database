@@ -24,5 +24,6 @@ libraryDependencies += "com.typesafe.slick" %% "slick-codegen" % "3.3.0"
 
 libraryDependencies += "com.github.tototoshi" %% "slick-joda-mapper" % "2.4.0"
 
-libraryDependencies += "mysql" % "mysql-connector-java" % "8.0.16"
+libraryDependencies += "mysql" % "mysql-connector-java" % "5.1.47"
+
 

@@ -13,6 +13,8 @@ object md5 {
 
 
   def main(args: Array[String]): Unit = {
-    println(Utils.date.toString)
+    val x = DigestUtils.md5Hex("pol")
+    println(x.toUpperCase)
+    println(DigestUtils.md5(x.getBytes()))
   }
 }

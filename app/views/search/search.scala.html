@@ -1,0 +1,144 @@
+@(input: String)(implicit session: Session)
+@home.main("Search") {
+
+    <style>
+
+            .fixed-table-container {
+                border: none;
+            }
+
+            .table > tbody > tr > td {
+                border: none;
+            }
+
+            .bootstrap-table .table {
+                border: none;
+            }
+
+            .result-border {
+                border: 1px solid #dbe3e7;
+                padding: 20px 20px 0px 20px;
+                border-radius: 5px;
+            }
+
+            .type-right {
+                float: right;
+                border-radius: 5px;
+                background-color: #F1F1F1;
+            }
+
+
+    </style>
+
+    <div class="row">
+        <div class="form-group col-sm-12">
+            <h2 class="page-heading">Keyword Search</h2>
+        </div>
+    </div>
+
+
+    <div align="center">
+        <div style="width: 80%;">
+
+            <div style="margin-top: 50px">
+
+                <form class="registration-form form-horizontal" id="form"
+                accept-charset="UTF-8" method="get" action="/MRDB/search/searchBefore">
+          @*          <h1>Search</h1>*@
+                    <input type="text" class="form-control" name="input" style="height: 40px;
+                        float: left" placeholder="Keyword" id="input">
+
+                    <button style="float: left;
+                        background-color: transparent;
+                        border: transparent;
+                        float: right;
+                        margin-top: -31px;
+                        margin-right: 10px;" type="submit">
+                        <i class="fa fa-search" style="font-size: 20px"></i>
+                    </button>
+                    <span class="help-block" style="float: left;">
+                        e.g.,&nbsp;<a href="#" onclick="showExample()" class="resLink"><em id="egQuery">
+                        example</em></a></span>
+                </form>
+
+            </div>
+            <br>
+            <br>
+            <br>
+
+            <div id="result" style="display: none">
+                <hr style="border: 1px solid #e9f3f4;">
+
+                <div style="padding-top: 10px;">
+                    <div align="left" style="font-size: 20px;"><b>Keyword : </b><span>@input</span></div>
+
+
+
+                    <table id="table" class="table" data-pagination="true" data-page-list="[5, 10]" data-page-size="5"
+                    style="margin-top: 20px"></table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+
+            $(function () {
+
+                $("#select").select2();
+
+                if (!@input.trim.isEmpty) {
+                    Search();
+                }
+
+            });
+
+            function showExample() {
+                $("#input").val("GO:0005524 K02111 ECO:0000255");
+            }
+
+
+            function Search() {
+                var index = layer.load(1);
+
+                var obj = $("#select").val();
+
+
+                $("#table").bootstrapTable('destroy');
+                $('#table').bootstrapTable({
+                    method: 'post',
+                    url: "/MRDB/search/getResult?input=@input",
+                    sidePagination: "server",
+                    pageNumber: 1,
+                    pagination: true,
+                    pageList: [5, 10],
+                    pageSize: 5,
+                    contentType: "application/x-www-form-urlencoded",
+                    showHeader: false,
+                    columns: [{
+                        field: "result",
+                        formatter: function (value, row, index) {
+                            var link = "/MRDB/genome/moreInfo?gene=ID_" + row.id;
+
+                            var main = "<div class='result-border'><a href='" + link + "' target='_blank'>" + row.geneid + "</a><hr>";
+                            var option = "";
+                            $.each(row.result, function (i, v) {
+                                option += "<p style='font-size: 12px'><b>" + v.option + " ：</b> " + v.result + "</p>";
+                            });
+
+                            var html = main + option + "</div>";
+
+                            return html;
+                        }
+                    }]
+                });
+
+                layer.close(index);
+                $("#result").show();
+            }
+
+
+
+    </script>
+}

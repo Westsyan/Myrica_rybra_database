@@ -1,0 +1,120 @@
+@()(implicit session: Session)
+@home.main("Evolutionary Analysis") {
+
+    <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("mscroll/css/lz_index.css")">
+
+    <style>
+        .picture_list{
+            text-align: center;
+        }
+
+        .h4-align{
+            text-align: left;
+            margin-left: 10px;
+        }
+    </style>
+
+    <div class="row">
+        <div class="form-group col-sm-12">
+            <h2 class="page-heading">Evolutionary Analysis</h2>
+        </div>
+    </div>
+
+    <div class="box">
+        <h4 class="area">
+            <span class="area_title" data-id="1">Solanum_Vitis_Fragaria_Morus_Myrica</span>
+            <div class="area_img">
+                <img src="/assets/mscroll/img/top.png">
+            </div>
+        </h4>
+        <div class="picture_list">
+            <div  style="width: 50%;float: left;border-right: 1px solid #dddddd">
+                <h4 class="h4-align">Gene stat:</h4>
+                <img src="/assets/images/map/01.gene.stat2.png" width="95%">
+            </div>
+            <div  style="width: 50%;float: left">
+                <h4 class="h4-align">Myrica veen:</h4>
+                <img src="/assets/images/map/01.Myrica.veen.png" width="95%">
+            </div>
+        </div>
+    </div>
+
+    <div class="box">
+        <h4 class="area">
+            <span class="area_title" data-id="1">Cicer_Arabidopsis_Oryza_Myrica</span>
+            <div class="area_img">
+                <img src="/assets/mscroll/img/top.png">
+            </div>
+        </h4>
+        <div class="picture_list">
+            <div  style="width: 50%;float: left;border-right: 1px solid #dddddd">
+                <h4 class="h4-align">Gene stat:</h4>
+                <img src="/assets/images/map/02.gene.stat2.png" width="95%">
+            </div>
+            <div  style="width: 50%;float: left">
+                <h4 class="h4-align">Myrica veen:</h4>
+                <img src="/assets/images/map/02.Myrica.veen.png" width="95%">
+            </div>
+        </div>
+    </div>
+
+    <div class="box">
+        <h4 class="area">
+            <span class="area_title" data-id="1">Evolution Tree</span>
+            <div class="area_img">
+                <img src="/assets/mscroll/img/top.png">
+            </div>
+        </h4>
+        <div class="picture_list">
+            <img src="/assets/images/map/Figtree.png" style="width: 80%;">
+        </div>
+    </div>
+
+    <div class="box">
+        <h4 class="area">
+            <span class="area_title" data-id="1">Collinearity</span>
+            <div class="area_img">
+                <img src="/assets/mscroll/img/top.png">
+            </div>
+        </h4>
+        <div class="picture_list">
+            <div  style="width: 50%;float: left;border-right: 1px solid #dddddd">
+                <h4 class="h4-align">co.Myrica.Myrica.draw:</h4>
+                <img src="/assets/images/map/co.Myrica.Myrica.draw.png" width="95%">
+            </div>
+            <div  style="width: 50%;float: left">
+                <h4 class="h4-align">ks.result:</h4>
+                <img src="/assets/images/map/ks.result.png" width="95%">
+            </div>
+        </div>
+    </div>
+
+    <div class="box">
+        <h4 class="area">
+            <span class="area_title" data-id="1">Gene_Family_Expansion_Or_Contraction</span>
+            <div class="area_img">
+                <img src="/assets/mscroll/img/top.png">
+            </div>
+        </h4>
+        <div class="picture_list">
+            <img src="/assets/images/map/cafetree2.png" style="width: 80%;">
+        </div>
+    </div>
+
+    <div class="box">
+        <h4 class="area">
+            <span class="area_title" data-id="1">LTR</span>
+            <div class="area_img">
+                <img src="/assets/mscroll/img/top.png">
+            </div>
+        </h4>
+        <div class="picture_list">
+            <img src="/assets/images/map/All.species.LTR.png" style="width: 80%;">
+        </div>
+    </div>
+
+
+    <script src="@routes.Assets.versioned("mscroll/js/mscroll.js")" type="text/javascript"></script>
+
+
+}

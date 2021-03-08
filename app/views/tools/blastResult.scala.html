@@ -1,6 +1,13 @@
-@(path: String)(implicit session: Session)
+@(path: String,types:String)(implicit session: Session)
 
-<script src="@routes.Assets.versioned("bootstrap/js/jquery-3.1.1.min.js")" type="text/javascript"></script>
+<link rel="stylesheet" media="screen" href="@routes.Assets.versioned("blast/css/bootstrap.css")">
+<link rel="stylesheet" media="screen" href="@routes.Assets.versioned("blast/css/blast.css")">
+<link rel="stylesheet" media="screen" href="@routes.Assets.versioned("font-awesome-4.7.0/css/font-awesome.min.css")">
+
+<script src="@routes.Assets.versioned("blast/js/jquery-3.1.1.min.js")" type="text/javascript"></script>
+<script src="@routes.Assets.versioned("blast/js/d3.v4.min.js")" type="text/javascript"></script>
+<script src="@routes.Assets.versioned("blast/js/bootstrap.min.js")" type="text/javascript"></script>
+<script src="@routes.Assets.versioned("blast/js/blast.js")" type="text/javascript"></script>
 
 <div id="resultContent">
 
@@ -15,9 +22,27 @@
                 type: "post",
                 success: function (data) {
                     $("#resultContent").html(data.html);
+                    $(".blastDraw").hide();
+
+                    if ("@types".indexOf("genome") !== -1) {
+                        $(".detail-info").hide();
+                    }
                 }
             })
 
         })
+
+
+        function toMoreInfo(name) {
+            window.open("/MRDB/genome/moreInfo?gene=GeneId_" + name);
+        }
+
+        function DownByName(name) {
+            window.location.href="/blast/downloadBlastByName?name=" + name +"&blastType=@types" ;
+        }
+
+        function DownByRange(name,obj){
+            window.location.href="/blast/downloadBlastByRange?name=" + name + "&range=" + $("."+obj).text() + "&blastType=@types";
+        }
 
 </script>

@@ -1,0 +1,38 @@
+@()(implicit session: Session)
+@home.main("Genetic Map") {
+
+    <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("mscroll/css/lz_index.css")">
+
+    <style>
+            .picture_list {
+                text-align: center;
+            }
+
+            .h4-align {
+                text-align: left;
+                margin-left: 10px;
+                margin-bottom: 30px;
+            }
+    </style>
+
+    <div class="row">
+        <div class="form-group col-sm-12">
+            <h2 class="page-heading">Genetic Map</h2>
+        </div>
+    </div>
+
+    <div class="box">
+        <div class="picture_list">
+
+            <h4 class="h4-align">
+                The red bayberry genetic haploblock (HB) map constructed using RAD tag sequencing technology(Jia et al，2019):</h4>
+            <img src="/assets/images/map/genetic1.png" >
+
+            <h4 class="h4-align">
+                Alignment of the female (a) and male (b) assembled scaffolds with the SNPs marker linkage genetic map(Jia et al，2019):</h4>
+            <img src="/assets/images/map/genetic2.png" >
+        </div>
+    </div>
+
+
+}

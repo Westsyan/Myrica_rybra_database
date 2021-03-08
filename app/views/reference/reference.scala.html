@@ -1,0 +1,104 @@
+@()(implicit session: Session)
+@home.main("Reference") {
+
+    <style>
+        td{
+            font-size: 16px;
+        }
+
+    </style>
+
+    <div class="row">
+        <div class="form-group col-sm-12">
+            <h2 class="page-heading">Reference</h2>
+        </div>
+    </div>
+
+
+            <div class="col-sm-11">
+                 <div class="letter">
+
+                    <div id="toolbar"></div>
+
+                    <div class="table-contain">
+                        <table id="table" class="table table-hover  table-bordered table-striped" data-pagination="true" data-search="true"
+                        data-toolbar="#toolbar"  data-search-align="right" data-page-list="[10]" data-page-size="15"
+                        data-multiple-search="true"
+                        style="border: 0px solid transparent;">
+                            <thead>
+                                <tr>
+                                    <th data-field="reference">Reference</th>
+                                    <th data-field="download">Download</th>
+
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+
+    <script>
+
+        $(function () {
+
+
+            $.ajax({
+                url:"@routes.HomeController.getReference()",
+                type:"post",
+                success:function (data) {
+                    $("#table").bootstrapTable({
+                        data:data,
+                        columns:[
+                            {
+                                field:"id",
+                                title:"ID",
+                                align:"center",
+                                valign:"middle",
+                                formatter: function (value, row) {
+                                    if(row.id < 10){
+                                        return "R0000" + row.id;
+                                    }else if(row.id >99){
+                                        return "R00" + row.id;
+                                    }else {
+                                        return "R000" + row.id;
+                                    }
+                                }
+                            },
+                            {
+                                field:"reference",
+                                title:"Reference",
+                                valign:"middle",
+                                formatter: function (value, row) {
+                                    return "<a href='/MRDB/utils/openPdf?file=" + row.reference + "' target='_blank'><div>" + row.english + "</div>" +
+                                            "<div>" + row.reference + "</div></a>";
+                                }
+                            },
+                            {
+                                field:"date",
+                                title:"Release date",
+                                align:"center",
+                                valign:"middle"
+                            },
+                            {
+                                field:"download",
+                                title:"Download",
+                                align:"center",
+                                valign:"middle",
+                                formatter: function (value, row) {
+                                    return "<p><a href='/MRDB/utils/downloadPdf?file=" + row.reference + "' target='_blank'><i class='fa fa-download'></i></a></p>";
+                                }
+                            }
+                        ]
+                    })
+                }
+
+            })
+        })
+
+
+    </script>
+
+
+
+}

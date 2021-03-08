@@ -1,0 +1,42 @@
+@(id:Int)
+
+<div id="charts"></div>
+
+<script src="@routes.Assets.versioned("bootstrap/js/jquery-3.1.1.min.js")" type="text/javascript"></script>
+<script src="@routes.Assets.versioned("Highcharts-6.0.1/code/highcharts.js")" type="text/javascript"></script>
+@*<script src="@routes.Assets.versioned("Highcharts-6.0.1/code/highcharts-more.js")" type="text/javascript"></script>*@
+<script src="@routes.Assets.versioned("Highcharts-6.0.1/code/modules/exporting.js")" type="text/javascript"></script>
+
+<script>
+            $.ajax({
+              url: "@routes.ExpressionController.getColumnChartsData(id)",
+              type: "post",
+              success: function (data) {
+                Highcharts.chart('charts', {
+                  chart: {
+                    type: 'column'
+                  },
+                  credits: {
+                    enabled: false
+                  },
+                  title: {
+                    text: "Gene Expression"
+                  },
+                  xAxis: {
+                    categories: ["T01_T11_T21", "T02_T12_T22", "T03_T13_T23", "T04_T14_T24", "T05_T15_T25", "T06_T16_T26",
+                        "T07_T17_T27", "T08_T18_T28", "T09_T19_T29", "T10_T20_T30"],
+                    crosshair: true
+                  },
+                  yAxis: {
+                    title: {
+                      text: "Expression(FPKM)"
+                    }
+                  },
+                  legend: {
+                    enabled: false
+                  },
+                  series: data
+                });
+              }
+            });
+    </script>
